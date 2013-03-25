@@ -8,9 +8,59 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <TextView
+    <DigitalClock
+        android:id="@+id/digitalClock1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="DigitalClock"
+        android:textSize="30dp" />
+
+    <TextView
+        android:id="@+id/statustext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/statuspic"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="I am out for lunch, will be back in 30 min"
+        android:textSize="20dp" />
+
+    <ImageView
+        android:id="@+id/statuspic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/digitalClock1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:gravity="center"
+        android:src="@drawable/lunch" />
+
+    <TextView
+        android:id="@+id/group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="Computer Games and Interactive Design"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/group"
+        android:layout_below="@+id/digitalClock1"
+        android:text="Jesper Sandberg"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/leavenote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="Leave note" />
 
 </RelativeLayout>

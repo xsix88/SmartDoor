@@ -63,4 +63,14 @@
         android:layout_alignParentRight="true"
         android:text="Leave note" />
 
+    <TextView
+        android:id="@+id/notecounter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/statuspic"
+        android:layout_toLeftOf="@+id/leavenote"
+        android:text="0"
+        android:textSize="20dp"
+        android:visibility="invisible" />
+
 </RelativeLayout>

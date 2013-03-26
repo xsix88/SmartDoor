@@ -26,6 +26,10 @@
             android:name="itu.dk.masterthesis.smartdoor.AdminActivity"
             android:label="@string/title_activity_admin" >
         </activity>
+        <activity
+            android:name="itu.dk.masterthesis.smartdoor.NoteActivity"
+            android:label="@string/title_activity_note" >
+        </activity>
     </application>
 
 </manifest>

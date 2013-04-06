@@ -6,5 +6,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_admin">AdminActivity</string>
     <string name="title_activity_note">NoteActivity</string>
+    <string name="title_activity_flickr">FlickrActivity</string>
+    <string name="title_activity_viewthumbnails">ViewThumbnailsActivity</string>
+    <string name="statusB">Update Status</string>
+    <string name="pictureB">GO</string>
+    <string name="note">Insert text to update the status...</string>
+    <string name="title_activity_view_thumbnails">ViewThumbnailsActivity</string>
 
 </resources>

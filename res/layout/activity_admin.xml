@@ -63,4 +63,12 @@
         android:layout_alignParentRight="true"
         android:text="Update" />
 
+    <Button
+        android:id="@+id/noteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/admin_status_text"
+        android:text="Read notes" />
+
 </RelativeLayout>

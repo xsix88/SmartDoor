@@ -12,5 +12,6 @@
     <string name="pictureB">GO</string>
     <string name="note">Insert text to update the status...</string>
     <string name="title_activity_view_thumbnails">ViewThumbnailsActivity</string>
+    <string name="title_activity_read_note">ReadNoteActivity</string>
 
 </resources>

@@ -31,6 +31,7 @@ public class AdminActivity extends Activity {
 		final Button update_button = (Button) findViewById(R.id.admin_update_button);
 		final EditText status_text = (EditText) findViewById(R.id.admin_status_text);
 		final Button readNotes_button = (Button) findViewById(R.id.noteButton);
+		final Button clearNotes_button = (Button) findViewById(R.id.clearNotesButton);
 		
 		Intent intent = getIntent();
 		if(intent.hasExtra("selectedPicture")) {
@@ -73,6 +74,12 @@ public class AdminActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(AdminActivity.this, FlickrActivity.class);
 				startActivity(intent);
+			}
+		});
+		clearNotes_button.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				adapter.clearNotes();
 			}
 		});
 		update_button.setOnClickListener(new View.OnClickListener() {

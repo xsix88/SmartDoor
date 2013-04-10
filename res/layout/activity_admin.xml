@@ -71,4 +71,12 @@
         android:layout_below="@+id/admin_status_text"
         android:text="Read notes" />
 
+    <Button
+        android:id="@+id/clearNotesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="Clear notes" />
+
 </RelativeLayout>

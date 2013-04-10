@@ -27,11 +27,15 @@ public class WriteNoteActivity extends Activity {
 		addnote_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				adapter.saveNote(person.getText() + "", note.getText() + "");
-				Intent intent = new Intent(WriteNoteActivity.this, MainActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
-				MainActivity.toaster("Note added.");
+				if(person.getText().toString().isEmpty()) {
+					MainActivity.toaster("You have to write your name.");
+				} else {
+					adapter.saveNote(person.getText() + "", note.getText() + "");
+					Intent intent = new Intent(WriteNoteActivity.this, MainActivity.class);
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					startActivity(intent);
+					MainActivity.toaster("Note added.");
+				}
 			 }
 		});
 	}

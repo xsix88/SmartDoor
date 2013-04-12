@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -32,6 +33,11 @@ public class AdminActivity extends Activity {
 		final EditText status_text = (EditText) findViewById(R.id.admin_status_text);
 		final Button readNotes_button = (Button) findViewById(R.id.noteButton);
 		final Button clearNotes_button = (Button) findViewById(R.id.clearNotesButton);
+		
+		if(adapter.getNumberOfNotes() > 0) {
+			readNotes_button.setText("Read notes ("+adapter.getNumberOfNotes()+")");
+			readNotes_button.setTypeface(null,Typeface.BOLD);
+		}
 		
 		Intent intent = getIntent();
 		if(intent.hasExtra("selectedPicture")) {

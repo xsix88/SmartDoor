@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,15 +21,18 @@ public class MainActivity extends Activity {
 	
 	static Context context;
 	byte[] byteArray;
-	DBadapter adapter;
+	static DBadapter adapter;
 	Cursor status;
-	TextView status_text;
-	ImageView status_pic;
+	static TextView status_text;
+	static ImageView status_pic;
+	static boolean startThread = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		Log.i("test", "Am I called?");
 		
 		adapter = new DBadapter(this);
 		adapter.open();
@@ -36,6 +41,13 @@ public class MainActivity extends Activity {
 		final Button leavenote_button = (Button) findViewById(R.id.leavenote);
 		status_text = (TextView) findViewById(R.id.statustext);
 		status_pic = (ImageView) findViewById(R.id.statuspic);
+		
+		if(!startThread) {
+			Log.i("test", "Am I called 2.0?");
+			Handler handler = new Handler();
+			new Thread((Runnable) new TcpServer(handler)).start();
+			startThread = true;
+		}
 		
 		final Intent intent = getIntent();
 		if(intent.hasExtra("status_text")) {
@@ -69,6 +81,21 @@ public class MainActivity extends Activity {
 			}
 			status.close();
 		}
+	}
+	
+	public static void setStatus(String status, byte[] pic) {
+		if(pic.length <= 0) {
+			Cursor cursor = adapter.getStatus();
+			if(cursor.getCount() > 0) {
+				if (cursor.moveToFirst()){
+					pic = cursor.getBlob(cursor.getColumnIndex("pic"));
+				}
+			}
+		}
+		adapter.saveStatus(pic, status);
+		status_text.setText(status);
+		Bitmap bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length);
+		status_pic.setImageBitmap(bmp);
 	}
 	
 	@Override

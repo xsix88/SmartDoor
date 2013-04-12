@@ -35,6 +35,14 @@ public class DBadapter {
 		return db.rawQuery("SELECT * FROM statuses ORDER BY _id DESC LIMIT ?", new String[] {"1"});
 	}
 	
+	public int getNumberOfNotes() {
+		Cursor nCount = db.rawQuery("SELECT count(*) FROM notes", new String[]{});
+		nCount.moveToFirst();
+		int count = nCount.getInt(0);
+		nCount.close();
+		return count;
+	}
+	
 	public void saveStatus(byte[] picture, String status) {
 		ContentValues values = new ContentValues();
 		values.put("pic", picture);

@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,18 +31,23 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		Log.i("test", "Am I called?");
-		
 		adapter = new DBadapter(this);
 		adapter.open();
 		context = this;
+		
+		//Populate the static statuses
+		/*adapter.saveStatic("I am out for lunch.");
+		adapter.saveStatic("I am out for a meeting.");
+		adapter.saveStatic("I am sick today.");
+		adapter.saveStatic("I am on holiday.");
+		adapter.saveStatic("I am at a conference.");*/
+		//adapter.clearStatics();
 		
 		final Button leavenote_button = (Button) findViewById(R.id.leavenote);
 		status_text = (TextView) findViewById(R.id.statustext);
 		status_pic = (ImageView) findViewById(R.id.statuspic);
 		
 		if(!startThread) {
-			Log.i("test", "Am I called 2.0?");
 			Handler handler = new Handler();
 			new Thread((Runnable) new TcpServer(handler)).start();
 			startThread = true;
@@ -67,7 +71,7 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		status = adapter.getStatus();
+		status = adapter.getStatus("1");
 		if(status.getCount() > 0) {
 			if (status.moveToFirst()){
 				do {
@@ -85,7 +89,7 @@ public class MainActivity extends Activity {
 	
 	public static void setStatus(String status, byte[] pic) {
 		if(pic.length <= 0) {
-			Cursor cursor = adapter.getStatus();
+			Cursor cursor = adapter.getStatus("1");
 			if(cursor.getCount() > 0) {
 				if (cursor.moveToFirst()){
 					pic = cursor.getBlob(cursor.getColumnIndex("pic"));

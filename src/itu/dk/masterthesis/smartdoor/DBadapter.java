@@ -31,8 +31,12 @@ public class DBadapter {
 		db.execSQL("INSERT INTO notes(person, note, time) VALUES(?, ?, datetime('now'))", new String[]{person, note});
 	}
 	
-	public Cursor getStatus() {
-		return db.rawQuery("SELECT * FROM statuses ORDER BY _id DESC LIMIT ?", new String[] {"1"});
+	public Cursor getStatus(String amount) {
+		return db.rawQuery("SELECT * FROM statuses ORDER BY _id DESC LIMIT ?", new String[] {amount});
+	}
+	
+	public Cursor getStatic(String amount) {
+		return db.rawQuery("SELECT * FROM statics ORDER BY _id DESC LIMIT ?", new String[] {amount});
 	}
 	
 	public int getNumberOfNotes() {
@@ -41,6 +45,20 @@ public class DBadapter {
 		int count = nCount.getInt(0);
 		nCount.close();
 		return count;
+	}
+	
+	public int getNumberOfStatics() {
+		Cursor nCount = db.rawQuery("SELECT count(*) FROM statics", new String[]{});
+		nCount.moveToFirst();
+		int count = nCount.getInt(0);
+		nCount.close();
+		return count;
+	}
+	
+	public void saveStatic(String status) {
+		ContentValues values = new ContentValues();
+		values.put("status", status);
+        db.insert("statics", null, values);
 	}
 	
 	public void saveStatus(byte[] picture, String status) {
@@ -53,6 +71,10 @@ public class DBadapter {
 	
 	public void clearNotes() {
 		db.execSQL("DELETE FROM notes");
+	}
+	
+	public void clearStatics() {
+		db.execSQL("DELETE FROM statics");
 	}
 
 	public void clearPictures() {

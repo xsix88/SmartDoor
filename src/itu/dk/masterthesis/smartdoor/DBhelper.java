@@ -17,12 +17,13 @@ public class DBhelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE notes (_id integer primary key autoincrement, person TEXT, note TEXT, time DATETIME)");
 		db.execSQL("CREATE TABLE statuses (_id integer primary key autoincrement, pic BLOB, status TEXT)");
+		db.execSQL("CREATE TABLE statics (_id integer primary key autoincrement, status TEXT)");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE notes");
 		db.execSQL("DROP TABLE statuses");
+		db.execSQL("DROP TABLE statics");
 	}
-
 }

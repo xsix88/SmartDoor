@@ -1,6 +1,8 @@
 package itu.dk.masterthesis.smartdoor;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -19,6 +21,7 @@ public class AdminActivity extends Activity {
 	byte[] byteArray;
 	DBadapter adapter;
 	Cursor status;
+	EditText status_text;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +33,10 @@ public class AdminActivity extends Activity {
 		
 		final Button change_pic_button = (Button) findViewById(R.id.admin_picture_change_button);
 		final Button update_button = (Button) findViewById(R.id.admin_update_button);
-		final EditText status_text = (EditText) findViewById(R.id.admin_status_text);
+		status_text = (EditText) findViewById(R.id.admin_status_text);
 		final Button readNotes_button = (Button) findViewById(R.id.noteButton);
 		final Button clearNotes_button = (Button) findViewById(R.id.clearNotesButton);
+		final Button selectStatus_button = (Button) findViewById(R.id.select_static_status);
 		
 		if(adapter.getNumberOfNotes() > 0) {
 			readNotes_button.setText("Read notes ("+adapter.getNumberOfNotes()+")");
@@ -46,7 +50,7 @@ public class AdminActivity extends Activity {
 			Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 			status_pic.setImageBitmap(bmp);
 			
-			status = adapter.getStatus();
+			status = adapter.getStatus("1");
 			if(status.getCount() > 0) {
 				if (status.moveToFirst()){
 					do {
@@ -58,7 +62,7 @@ public class AdminActivity extends Activity {
 				status.close();
 			}
 		} else {
-			status = adapter.getStatus();
+			status = adapter.getStatus("1");
 			if(status.getCount() > 0) {
 				if (status.moveToFirst()){
 					do {
@@ -80,6 +84,33 @@ public class AdminActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(AdminActivity.this, FlickrActivity.class);
 				startActivity(intent);
+			}
+		});
+		selectStatus_button.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				final CharSequence[] items = new CharSequence[adapter.getNumberOfStatics()];
+				status = adapter.getStatic(adapter.getNumberOfStatics()+"");
+				if(status.getCount() > 0) {
+					int i = 0;
+					if (status.moveToFirst()){
+						do {
+						   String text = status.getString(status.getColumnIndex("status"));
+						   items[i] = text;
+						   i++;
+						   }
+						while(status.moveToNext());
+					}
+					status.close();
+				}
+				//final CharSequence[] items = {"Status 1", "Status 2","Status 3", "Status 4", "Status 5"};
+				AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
+				builder.setTitle("Select Status");
+				builder.setItems(items, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						status_text.setText(items[item]);						}
+				});
+				builder.show();
 			}
 		});
 		clearNotes_button.setOnClickListener(new View.OnClickListener() {

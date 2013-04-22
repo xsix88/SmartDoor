@@ -152,7 +152,7 @@ public class ViewThumbnailsActivity extends Activity {
 		Intent startIntent = getIntent();
 		// and then the string the user inputted
 		String searchText = startIntent
-				.getStringExtra(FlickrActivity.EXTRA_SEARCHTEXT);
+				.getStringExtra(AdminActivity.EXTRA_SEARCHTEXT);
 
 		// configure the search object
 		SearchParameters searchParameters = new SearchParameters();
@@ -167,7 +167,7 @@ public class ViewThumbnailsActivity extends Activity {
 		Intent startIntent = getIntent();
 		// and then the string the user inputted
 		String searchText = startIntent
-				.getStringExtra(FlickrActivity.EXTRA_SEARCHTEXT);
+				.getStringExtra(AdminActivity.EXTRA_SEARCHTEXT);
 		// configure the search object
 		SearchParameters searchParameters = new SearchParameters();
 		searchParameters.setText(searchText);
@@ -223,9 +223,10 @@ public class ViewThumbnailsActivity extends Activity {
 			public void onClick(View v) {
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				pi.thumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
-				byte[] byteArray = stream.toByteArray();			      
-				Intent returnIntent = new Intent();			      
-			    returnIntent.putExtra("selectedPicture", byteArray);
+				byte[] byteArray = stream.toByteArray();
+				Intent returnIntent = new Intent();
+				returnIntent.putExtra("selectedPicture", byteArray);
+				returnIntent.putExtra("status_text", getIntent().getStringExtra("status_text"));
 			    setResult(RESULT_OK, returnIntent);
 			    finish();
 			}

@@ -22,6 +22,8 @@ public class AdminActivity extends Activity {
 	DBadapter adapter;
 	Cursor status;
 	EditText status_text;
+	public static final String EXTRA_SEARCHTEXT = "extraSearch";
+	public static final int GET_PICTURE = 13;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class AdminActivity extends Activity {
 		final Button change_pic_button = (Button) findViewById(R.id.admin_picture_change_button);
 		final Button update_button = (Button) findViewById(R.id.admin_update_button);
 		status_text = (EditText) findViewById(R.id.admin_status_text);
+		final EditText picture_text = (EditText) findViewById(R.id.pictureTxt);
 		final Button readNotes_button = (Button) findViewById(R.id.noteButton);
 		final Button clearNotes_button = (Button) findViewById(R.id.clearNotesButton);
 		final Button selectStatus_button = (Button) findViewById(R.id.select_static_status);
@@ -43,47 +46,36 @@ public class AdminActivity extends Activity {
 			readNotes_button.setTypeface(null,Typeface.BOLD);
 		}
 		
-		Intent intent = getIntent();
-		if(intent.hasExtra("selectedPicture")) {
-			status_pic = (ImageView) findViewById(R.id.admin_picture);
-			byteArray = intent.getExtras().getByteArray("selectedPicture");
-			Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-			status_pic.setImageBitmap(bmp);
-			
-			status = adapter.getStatus("1");
-			if(status.getCount() > 0) {
-				if (status.moveToFirst()){
-					do {
-					   String text = status.getString(status.getColumnIndex("status"));
-					   status_text.setText(text);
-					}
-					while(status.moveToNext());
+		status = adapter.getStatus("1");
+		if(status.getCount() > 0) {
+			if (status.moveToFirst()){
+				do {
+				   String text = status.getString(status.getColumnIndex("status"));
+				   byteArray =  status.getBlob(status.getColumnIndex("pic"));
+				   Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+				   status_pic = (ImageView) findViewById(R.id.admin_picture);
+				   status_pic.setImageBitmap(bmp);
+				   status_text.setText(text);
 				}
-				status.close();
+				while(status.moveToNext());
 			}
-		} else {
-			status = adapter.getStatus("1");
-			if(status.getCount() > 0) {
-				if (status.moveToFirst()){
-					do {
-					   String text = status.getString(status.getColumnIndex("status"));
-					   byteArray =  status.getBlob(status.getColumnIndex("pic"));
-					   Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-					   status_pic = (ImageView) findViewById(R.id.admin_picture);
-					   status_pic.setImageBitmap(bmp);
-					   status_text.setText(text);
-					}
-					while(status.moveToNext());
-				}
-				status.close();
-			}
+			status.close();
 		}
 		
 		change_pic_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(AdminActivity.this, FlickrActivity.class);
-				startActivity(intent);
+				if (picture_text.getText().length() > 0) {
+					// create an intent to start the ViewThumbnailsActivity
+			    	Intent startThumbnailsActIntent = new Intent(AdminActivity.this, ViewThumbnailsActivity.class);
+			    	// put in the intent the search string too
+			    	startThumbnailsActIntent.putExtra(EXTRA_SEARCHTEXT, picture_text.getText().toString());		
+			    	startThumbnailsActIntent.putExtra("status_text", status_text.getText().toString());		
+			    	// fire the intent
+			    	startActivityForResult(startThumbnailsActIntent, GET_PICTURE);
+				} else {
+					MainActivity.toaster("Enter text to search for a picture.");
+				}
 			}
 		});
 		
@@ -138,6 +130,21 @@ public class AdminActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// Check which request we're responding to
+	    if (requestCode == GET_PICTURE) {
+	        // Make sure the request was successful
+	        if (resultCode == RESULT_OK) {
+	        	status_pic = (ImageView) findViewById(R.id.admin_picture);
+				byteArray = data.getByteArrayExtra("selectedPicture");
+				Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+				status_pic.setImageBitmap(bmp);
+				status_text.setText(data.getStringExtra("status_text"));
+	        }
+	    }
 	}
 	
 	@Override

@@ -63,30 +63,37 @@
         android:text="Clear notes" />
 
     <Button
-        android:id="@+id/admin_picture_change_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/admin_picture"
-        android:layout_alignParentRight="true"
-        android:text="Change" />
-
-    <Button
         android:id="@+id/select_static_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/admin_status_text"
         android:text="Select status from a list" />
-    
-    
+
+    <EditText
+        android:id="@+id/pictureTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/admin_picture"
+        android:layout_toLeftOf="@+id/admin_picture_change_button"
+        android:ems="10"
+        android:hint="Find picture of..." />
+
+    <Button
+        android:id="@+id/admin_picture_change_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/admin_picture"
+        android:layout_alignParentRight="true"
+        android:text="Search" />
+
     <Button
         android:id="@+id/noteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/clearNotesButton"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="30dp"
         android:text="Read notes" />
-    
 
 </RelativeLayout>

@@ -26,11 +26,13 @@
         </activity>
         <activity
             android:name="itu.dk.masterthesis.smartdoor.AdminActivity"
-            android:label="@string/title_activity_admin" >
+            android:label="@string/title_activity_admin"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name="itu.dk.masterthesis.smartdoor.WriteNoteActivity"
-            android:label="@string/title_activity_note" >
+            android:label="@string/title_activity_note"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name="itu.dk.masterthesis.smartdoor.FlickrActivity"

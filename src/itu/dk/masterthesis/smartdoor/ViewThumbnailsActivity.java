@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
 import android.widget.TableLayout;
@@ -30,52 +31,60 @@ import com.gmail.yuyang226.flickr.photos.Photo;
 import com.gmail.yuyang226.flickr.photos.SearchParameters;
 
 public class ViewThumbnailsActivity extends Activity {
-	
+
 	static final int DIALOG_INFINITE_PROGRESS = 0;
 	public static final String EXTRA_PHOTO_URI = "photo_uri";
 	public static final String EXTRA_PHOTO_PAGE_URI = "page_uri";
+
+	int page = 1;
 	
 	class PhotoInfo {
 		Photo photo;
 		Bitmap thumbnail;
-	}
+	}	
 	
-	class SearchAsyncTask extends AsyncTask<SearchParameters,PhotoInfo,List<PhotoInfo>> {
+	class SearchAsyncTask extends
+			AsyncTask<SearchParameters, PhotoInfo, List<PhotoInfo>> {
 		@SuppressWarnings({ "deprecation" })
 		@Override
 		protected List<PhotoInfo> doInBackground(SearchParameters... params) {
-			SearchParameters q = params[0];			
-			
+			SearchParameters q = params[0];
+
 			Flickr f = new Flickr("24468596eb57bb533167e1846584ea6c");
 			List<Photo> photos = null;
 			try {
-				//search the photos..this method will take some time
-				photos = f.getPhotosInterface().search(q, 20, 1);
+				// search the photos..this method will take some time
+				photos = f.getPhotosInterface().search(q, 20, page);
 			} catch (Exception e) {
 				Log.e("SearchAsyncTask", "can't search photos", e);
 			} finally {
 				// dismiss the dialog
 				dismissDialog(DIALOG_INFINITE_PROGRESS);
 			}
-			
-			if(photos==null) {return null;}
+
+			if (photos == null) {
+				return null;
+			}
 
 			List<PhotoInfo> out = new ArrayList<PhotoInfo>();
 			Bitmap bitmap;
-			for(Photo p : photos) {
+			 
+			for (Photo p : photos) {
 				try {
 					// get the thumbnail url and download it in a Bitmap object
-					String thumbUrl = p.getSmallUrl();
+					//String thumbUrl = p.getSmallUrl();
+					String thumbUrl = p.getMediumUrl();
 					URL url = new URL(thumbUrl);
 					HttpURLConnection urlConnection = (HttpURLConnection) url
 							.openConnection();
 					bitmap = BitmapFactory.decodeStream(urlConnection
 							.getInputStream());
-				} catch(Exception e) {
+					
+				} catch (Exception e) {
 					e.printStackTrace();
 					bitmap = null;
 				}
-				if(bitmap != null) {
+				if (bitmap != null) {
 					// if we got a thumb, create a PhotoInfo object
 					PhotoInfo pi = new PhotoInfo();
 					pi.photo = p;
@@ -88,57 +97,85 @@ public class ViewThumbnailsActivity extends Activity {
 			
 			return out;
 		}
+
 		@SuppressWarnings("deprecation")
 		@Override
 		protected void onPreExecute() {
 			// while search, show a dialog with infinite progress
 			showDialog(DIALOG_INFINITE_PROGRESS);
+			// disable load more button
+			Button loadMoreButton = (Button) findViewById(R.id.MoreButton);
+			loadMoreButton.setEnabled(false);
 		}
+
 		@Override
 		protected void onProgressUpdate(PhotoInfo... values) {
 			// call the addPhoto method
 			addPhoto(values[0]);
 		}
+
 		@Override
 		protected void onPostExecute(List<PhotoInfo> result) {
-			if(result==null) {
+			if (result == null) {
 				// I guess show some dialog to the user
-				Toast.makeText(ViewThumbnailsActivity.this, "Sorry, an error occurred!", Toast.LENGTH_SHORT).show();
-			}
+				Toast.makeText(ViewThumbnailsActivity.this,
+						"Sorry, an error occurred!", Toast.LENGTH_SHORT).show();
+			} else {
+				Button loadMoreButton = (Button) findViewById(R.id.MoreButton);
+				loadMoreButton.setEnabled(true);
+				page++;
+			}	
+			
 		}
 	}
-	
+
 	// table layout variables
 	TableLayout table;
 	int photosPerRow;
 	int currentColumn;
 	TableRow currentRow = null;
+
 	//
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		requestWindowFeature( Window.FEATURE_NO_TITLE );
-		
-		setContentView( R.layout.activity_view_thumbnails);
 
-		table = (TableLayout)findViewById( R.id.ThumbsTableLayout);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+		setContentView(R.layout.activity_view_thumbnails);
+		
+		table = (TableLayout) findViewById(R.id.ThumbsTableLayout);
 		setupSizes();
 
 		// get the intent that started the activity
 		Intent startIntent = getIntent();
 		// and then the string the user inputted
-		String searchText = startIntent.getStringExtra( FlickrActivity.EXTRA_SEARCHTEXT );
-		
+		String searchText = startIntent
+				.getStringExtra(FlickrActivity.EXTRA_SEARCHTEXT);
+
 		// configure the search object
 		SearchParameters searchParameters = new SearchParameters();
 		searchParameters.setText(searchText);
-		
+
 		// start the SearchAsyncTask
 		new SearchAsyncTask().execute(searchParameters);
 	}
-	
+
+	public void loadMore(View v) {
+		// get the intent that started the activity
+		Intent startIntent = getIntent();
+		// and then the string the user inputted
+		String searchText = startIntent
+				.getStringExtra(FlickrActivity.EXTRA_SEARCHTEXT);
+		// configure the search object
+		SearchParameters searchParameters = new SearchParameters();
+		searchParameters.setText(searchText);
+		// start the SearchAsyncTask
+		new SearchAsyncTask().execute(searchParameters);
+
+	}
+
 	private void setupSizes() {
 		// get the width of the screen
 		int w = getResources().getDisplayMetrics().widthPixels;
@@ -147,40 +184,43 @@ public class ViewThumbnailsActivity extends Activity {
 		// the images will be max 200 width
 		photosPerRow = w / 200;
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		
-		if(DIALOG_INFINITE_PROGRESS == id) {
-			return ProgressDialog.show(this, "", "Searching photos, please wait...", true);
+
+		if (DIALOG_INFINITE_PROGRESS == id) {
+			return ProgressDialog.show(this, "",
+					"Searching photos, please wait...", true);
 		}
 		return super.onCreateDialog(id);
 	}
-	
-	protected void addPhoto( final PhotoInfo pi ) {
-		
-		// if we reached the end of the row, or we still need to start the first row
-		if( currentColumn==photosPerRow || currentColumn<0 ){
+
+	@SuppressWarnings("deprecation")
+	protected void addPhoto(final PhotoInfo pi) {
+
+		// if we reached the end of the row, or we still need to start the first
+		// row
+		if (currentColumn == photosPerRow || currentColumn < 0) {
 			// create a new row
 			currentRow = new TableRow(this);
 			// add it the the table
-			table.addView(currentRow, 
-				new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+			table.addView(currentRow, new LayoutParams(
+					LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 			// reset the currentColumn index
-			currentColumn=0;
+			currentColumn = 0;
 		}
-		
+
 		// create the image button
 		ImageButton img = new ImageButton(this);
 		// set the bitmap
-		img.setImageBitmap( pi.thumbnail );
+		img.setImageBitmap(pi.thumbnail);
 		// scale it if needed
 		img.setScaleType(ScaleType.FIT_XY);
 		// set the onClick listener
 		img.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				pi.thumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
 				byte[] byteArray = stream.toByteArray();			      
@@ -190,7 +230,7 @@ public class ViewThumbnailsActivity extends Activity {
 			    finish();
 			}
 		});
-		
+
 		currentRow.addView(img, 200, 200);
 		currentColumn++;
 	}

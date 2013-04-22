@@ -86,6 +86,7 @@ public class AdminActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		
 		selectStatus_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -137,6 +138,16 @@ public class AdminActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putString("status_text", status_text.getText().toString());
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		status_text.setText(savedInstanceState.getString("status_text"));
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,10 +48,12 @@ public class MainActivity extends Activity {
 		status_text = (TextView) findViewById(R.id.statustext);
 		status_pic = (ImageView) findViewById(R.id.statuspic);
 		
+		Log.i("test", "I got this far");
 		if(!startThread) {
 			Handler handler = new Handler();
 			new Thread((Runnable) new TcpServer(handler)).start();
 			startThread = true;
+			Log.i("test", "I started the TCP Server");
 		}
 		
 		final Intent intent = getIntent();

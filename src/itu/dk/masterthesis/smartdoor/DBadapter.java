@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class DBadapter {
 	DBhelper helper;
@@ -27,8 +28,26 @@ public class DBadapter {
 		return db.rawQuery("SELECT * FROM notes ORDER BY _id DESC LIMIT ?", new String[]{"10"});
 	}
 	
+	public int[] getPosition(String app) {
+		Cursor handlePos = db.rawQuery("SELECT x, y FROM positions WHERE app=? ORDER BY _id DESC LIMIT 1", new String[]{app});
+		handlePos.moveToFirst();
+		Log.i("DBadapter", "Get Position X: "+handlePos.getInt(handlePos.getColumnIndex("x")) + " Get Position Y: "+handlePos.getInt(handlePos.getColumnIndex("y")));
+		int[] result = { handlePos.getInt(handlePos.getColumnIndex("x")), handlePos.getInt(handlePos.getColumnIndex("y")) };
+		handlePos.close();
+		return result;
+	}
+	
 	public void saveNote(String person, String note) {
 		db.execSQL("INSERT INTO notes(person, note, time) VALUES(?, ?, datetime('now'))", new String[]{person, note});
+	}
+	
+	public void savePosition(String app, int x, int y) {
+		ContentValues values = new ContentValues();
+		values.put("app", app);
+		values.put("x", x);
+		values.put("y", y);
+        db.insert("positions", null, values);
+		Log.i("savePos", "App: " + app + " x: " + x + " y: " + y);
 	}
 	
 	public Cursor getStatus(String amount) {
@@ -79,5 +98,8 @@ public class DBadapter {
 
 	public void clearPictures() {
 		db.execSQL("DELETE FROM statuses");
+	}
+	public void clearPositions() {
+		db.execSQL("DELETE FROM positions");
 	}
 }

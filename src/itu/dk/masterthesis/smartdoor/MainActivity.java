@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsoluteLayout;
+import android.widget.AbsoluteLayout.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,8 +27,34 @@ public class MainActivity extends Activity {
 	Cursor status;
 	static TextView status_text;
 	static ImageView status_pic;
+	private ImageView movePostit;
+	private ImageView moveAboutme;
+	private ImageView moveCoffee;
+	private AbsoluteLayout aLayout;
 	static boolean startThread = false;
 
+	public void onResume(){
+		super.onResume();
+		
+		int[] postitPosition = adapter.getPosition("postit");
+		AbsoluteLayout.LayoutParams postParams = (AbsoluteLayout.LayoutParams)movePostit.getLayoutParams();
+		postParams.x = postitPosition[0];
+		postParams.y = postitPosition[1];
+		movePostit.requestLayout();
+		
+		int[] aboutmePosition = adapter.getPosition("aboutme");
+		AbsoluteLayout.LayoutParams aboutParams = (AbsoluteLayout.LayoutParams)moveAboutme.getLayoutParams();
+		aboutParams.x = aboutmePosition[0];
+		aboutParams.y = aboutmePosition[1];
+		moveAboutme.requestLayout();
+		
+		int[] coffeePosition = adapter.getPosition("coffee");
+		AbsoluteLayout.LayoutParams coffeeParams = (AbsoluteLayout.LayoutParams)moveCoffee.getLayoutParams();
+		coffeeParams.x = coffeePosition[0];
+		coffeeParams.y = coffeePosition[1];
+		moveCoffee.requestLayout();
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,10 +71,19 @@ public class MainActivity extends Activity {
 		adapter.saveStatic("I am on holiday.");
 		adapter.saveStatic("I am at a conference.");*/
 		//adapter.clearStatics();
+		//Populate X and Y positions
+		/*adapter.savePosition("postit", 223, 2);
+		adapter.savePosition("aboutme", 223, 2);
+		adapter.savePosition("coffee", 223, 2);*/
+		//Log.i("mytag", "Height: " + adapter.getPosition("postit")[0] + " - Width: " + adapter.getPosition("postit")[1]);
 		
 		final Button leavenote_button = (Button) findViewById(R.id.leavenote);
 		status_text = (TextView) findViewById(R.id.statustext);
 		status_pic = (ImageView) findViewById(R.id.statuspic);
+		movePostit = (ImageView) findViewById(R.id.postit);
+		moveAboutme = (ImageView) findViewById(R.id.aboutme);
+		moveCoffee = (ImageView) findViewById(R.id.coffee);
+		aLayout = (AbsoluteLayout) findViewById(R.id.alayout);
 		
 		Log.i("test", "I got this far");
 		if(!startThread) {
@@ -54,7 +91,7 @@ public class MainActivity extends Activity {
 			new Thread((Runnable) new TcpServer(handler)).start();
 			startThread = true;
 			Log.i("test", "I started the TCP Server");
-		}
+		}		
 		
 		final Intent intent = getIntent();
 		if(intent.hasExtra("status_text")) {
@@ -69,6 +106,7 @@ public class MainActivity extends Activity {
 		leavenote_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Log.i("mytag", "Height: " + adapter.getPosition("postit")[0] + " - Width: " + adapter.getPosition("postit")[1]);
 				Intent intent = new Intent(MainActivity.this, WriteNoteActivity.class);
 				startActivity(intent);
 			}

@@ -9,11 +9,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.AbsoluteLayout.LayoutParams;
 
 public class AdminActivity extends Activity {
 	
@@ -24,6 +28,11 @@ public class AdminActivity extends Activity {
 	EditText status_text;
 	public static final String EXTRA_SEARCHTEXT = "extraSearch";
 	public static final int GET_PICTURE = 13;
+	private ImageView movePostit;
+	private ImageView moveAboutme;
+	private ImageView moveCoffee;
+	private float oldXvalue;
+	private float oldYvalue;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,37 @@ public class AdminActivity extends Activity {
 		final Button readNotes_button = (Button) findViewById(R.id.noteButton);
 		final Button clearNotes_button = (Button) findViewById(R.id.clearNotesButton);
 		final Button selectStatus_button = (Button) findViewById(R.id.select_static_status);
+		movePostit = (ImageView) findViewById(R.id.postit);
+		moveAboutme = (ImageView) findViewById(R.id.aboutme);
+		moveCoffee = (ImageView) findViewById(R.id.coffee);
+		/*
+		int[] postitPosition = adapter.getPosition("postit");
+		movePostit.setLayoutParams(new LayoutParams(movePostit.getWidth(), movePostit.getHeight(), postitPosition[0], postitPosition[1]));
+		int[] aboutmePosition = adapter.getPosition("aboutme");
+		moveAboutme.setLayoutParams(new LayoutParams(moveAboutme.getWidth(), moveAboutme.getHeight(), aboutmePosition[0], aboutmePosition[1]));
+		int[] coffeePosition = adapter.getPosition("coffee");
+		moveCoffee.setLayoutParams(new LayoutParams(moveCoffee.getWidth(), moveCoffee.getHeight(), coffeePosition[0], coffeePosition[1]));
+		*/
+		
+		OnTouchListener otimg = new OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent me){
+		        if (me.getAction() == MotionEvent.ACTION_DOWN){
+		            oldXvalue = me.getX();
+		            oldYvalue = me.getY();
+		            Log.i("OnTouchListener", "Action Down " + oldXvalue + "," + oldYvalue);
+		        } else if (me.getAction() == MotionEvent.ACTION_MOVE  ){
+		        	LayoutParams params = new LayoutParams(v.getWidth(), v.getHeight(),(int)(me.getRawX() - (v.getWidth() / 2)), (int)(me.getRawY() - (v.getHeight()*3.3)));
+		        	v.setLayoutParams(params);
+		        } else if (me.getAction() == MotionEvent.ACTION_UP) {
+		        	adapter.savePosition(v.getContentDescription()+"", Math.round(me.getRawX() - (v.getWidth() / 2)), (int)Math.round(me.getRawY() - (v.getHeight()*3.3)));
+		        }
+		        return true;
+		    }
+		};
+		
+		movePostit.setOnTouchListener(otimg);
+		moveAboutme.setOnTouchListener(otimg);
+		moveCoffee.setOnTouchListener(otimg);
 		
 		if(adapter.getNumberOfNotes() > 0) {
 			readNotes_button.setText("Read notes ("+adapter.getNumberOfNotes()+")");

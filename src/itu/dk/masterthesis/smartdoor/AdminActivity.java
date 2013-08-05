@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,6 +34,28 @@ public class AdminActivity extends Activity {
 	private ImageView moveCoffee;
 	private float oldXvalue;
 	private float oldYvalue;
+	
+	public void onResume(){
+		super.onResume();
+		
+		int[] postitPosition = adapter.getPosition("postit");
+		AbsoluteLayout.LayoutParams postParams = (AbsoluteLayout.LayoutParams)movePostit.getLayoutParams();
+		postParams.x = postitPosition[0];
+		postParams.y = postitPosition[1];
+		movePostit.requestLayout();
+		
+		int[] aboutmePosition = adapter.getPosition("aboutme");
+		AbsoluteLayout.LayoutParams aboutParams = (AbsoluteLayout.LayoutParams)moveAboutme.getLayoutParams();
+		aboutParams.x = aboutmePosition[0];
+		aboutParams.y = aboutmePosition[1];
+		moveAboutme.requestLayout();
+		
+		int[] coffeePosition = adapter.getPosition("coffee");
+		AbsoluteLayout.LayoutParams coffeeParams = (AbsoluteLayout.LayoutParams)moveCoffee.getLayoutParams();
+		coffeeParams.x = coffeePosition[0];
+		coffeeParams.y = coffeePosition[1];
+		moveCoffee.requestLayout();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +128,7 @@ public class AdminActivity extends Activity {
 		change_pic_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				//adapter.syncDefaultsFromServer();
 				if (picture_text.getText().length() > 0) {
 					// create an intent to start the ViewThumbnailsActivity
 			    	Intent startThumbnailsActIntent = new Intent(AdminActivity.this, ViewThumbnailsActivity.class);

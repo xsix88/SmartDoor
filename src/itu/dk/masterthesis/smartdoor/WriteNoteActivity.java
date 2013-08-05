@@ -49,7 +49,6 @@ public class WriteNoteActivity extends Activity {
 	
 	protected void onDestroy() {
 		super.onDestroy();
-		adapter.close();
 	}
 
 }

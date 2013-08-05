@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
 		leavenote_button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Log.i("mytag", "Height: " + adapter.getPosition("postit")[0] + " - Width: " + adapter.getPosition("postit")[1]);
+				//Log.i("mytag", "Height: " + adapter.getPosition("postit")[0] + " - Width: " + adapter.getPosition("postit")[1]);
 				Intent intent = new Intent(MainActivity.this, WriteNoteActivity.class);
 				startActivity(intent);
 			}

@@ -63,14 +63,6 @@
         android:layout_marginTop="19dp"
         android:gravity="center"
         android:src="@drawable/lunch" />
-    
-    <Button
-        android:id="@+id/leavenote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/statuspic"
-        android:layout_below="@+id/notecounter"
-        android:text="Leave note" />
 
     <AbsoluteLayout
         android:id="@+id/alayout"

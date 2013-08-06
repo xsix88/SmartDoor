@@ -3,6 +3,7 @@ package itu.dk.masterthesis.smartdoor;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +47,43 @@ public class DBadapter {
 		clearStatics();
 		int cmd = 1;
 		new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/defaults/index.php?owner_id=1");
-	}	
+	}
+	
+	public void syncAppsFromServer() {
+		clearPositions();
+		int cmd = 8;
+		new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/apps/index.php?owner_id=1");
+	}
+	
+	public String checkForNewDefaults() {
+		int cmd = 7;
+		AsyncTask<String, Void, String> results = new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/defaults/index.php?owner_id=1&new=1");
+		try {
+			return results.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String checkForNewStatuses() {
+		int cmd = 7;
+		AsyncTask<String, Void, String> results = new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/status/index.php?owner_id=1&new=1");
+		try {
+			return results.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	public Cursor getNotes() {
 		return db.rawQuery("SELECT * FROM notes ORDER BY _id DESC LIMIT ?", new String[]{"10"});
@@ -55,7 +92,6 @@ public class DBadapter {
 	public int[] getPosition(String app) {
 		Cursor handlePos = db.rawQuery("SELECT x, y FROM positions WHERE app=? ORDER BY _id DESC LIMIT 1", new String[]{app});
 		handlePos.moveToFirst();
-		Log.i("DBadapter", "Get Position X: "+handlePos.getInt(handlePos.getColumnIndex("x")) + " Get Position Y: "+handlePos.getInt(handlePos.getColumnIndex("y")));
 		int[] result = { handlePos.getInt(handlePos.getColumnIndex("x")), handlePos.getInt(handlePos.getColumnIndex("y")) };
 		handlePos.close();
 		return result;
@@ -91,7 +127,14 @@ public class DBadapter {
         DBadapter.y = y;
         int cmd = 6;
 		new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/apps/index.php");
-		Log.i("savePos", "App: " + app + " x: " + x + " y: " + y);
+	}
+	
+	public static void savePositionNoRest(String app, int x, int y) {
+		ContentValues values = new ContentValues();
+		values.put("app", app);
+		values.put("x", x);
+		values.put("y", y);
+        db.insert("positions", null, values);
 	}
 	
 	public Cursor getStatus(String amount) {
@@ -133,6 +176,13 @@ public class DBadapter {
 		new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/defaults/index.php");
 	}
 	
+	public static void saveStaticNoRest(byte[] picture, String status) {
+		ContentValues values = new ContentValues();
+		values.put("pic", picture);
+		values.put("status", status);
+        db.insert("statics", null, values);
+	}
+	
 	public void saveStatus(byte[] picture, String status) {
 		Date myDate = new Date();
 	    long timeMilliseconds = myDate.getTime();
@@ -152,14 +202,22 @@ public class DBadapter {
 		new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/status/index.php");
 	}
 	
+	public void saveStatusNoRest(byte[] picture, String status) {
+		Date myDate = new Date();
+	    long timeMilliseconds = myDate.getTime();
+		ContentValues values = new ContentValues();
+		values.put("pic", picture);
+		values.put("status", status);
+		values.put("datetime", timeMilliseconds);
+        db.insert("statuses", null, values);
+	}
+	
 	public void clearNotes() {
 		db.execSQL("DELETE FROM notes");
 	}
-	
 	public void clearStatics() {
 		db.execSQL("DELETE FROM statics");
 	}
-
 	public void clearPictures() {
 		db.execSQL("DELETE FROM statuses");
 	}
@@ -184,7 +242,6 @@ class AsyncRest extends AsyncTask<String, Void, String> {
     	//EditText idnumber = (EditText) ((Activity) mContext).findViewById(R.id.idnumber);
     	try {
             URL url= new URL(urls[0]);
-            Log.i("Smartdoor", "URL: "+url);
             RestHandler rest = new RestHandler();
             switch(cmd) {
             	case 1:
@@ -203,7 +260,7 @@ class AsyncRest extends AsyncTask<String, Void, String> {
         		        JSONObject c = json.getJSONObject(i);
         		        byteArray = Base64.decode(c.getString("picture"), 0);
         		        status = c.getString("status");
-        		        DBadapter.saveStatic(byteArray, status);
+        		        DBadapter.saveStaticNoRest(byteArray, status);
             		}
         			break;
             	case 2:
@@ -214,7 +271,6 @@ class AsyncRest extends AsyncTask<String, Void, String> {
             		json1.put("picture", Base64.encodeToString(DBadapter.picture, Base64.DEFAULT));
             		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             		String dateString = fmt.format(DBadapter.datetime);
-            		Log.i("SmartDoor", "Date: "+dateString);
             		json1.put("datetime", dateString);
             		return rest.doPost(url+"", json1).toString();
             	/*case 3:
@@ -235,7 +291,6 @@ class AsyncRest extends AsyncTask<String, Void, String> {
             		json11.put("fromperson", DBadapter.from);
             		SimpleDateFormat fmt1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             		String dateString1 = fmt1.format(DBadapter.datetime);
-            		Log.i("SmartDoor", "Date: "+dateString1);
             		json11.put("datetime", dateString1);
             		return rest.doPost(url+"", json11).toString();
             	case 6:
@@ -245,6 +300,19 @@ class AsyncRest extends AsyncTask<String, Void, String> {
             		json2.put("x", DBadapter.x);
             		json2.put("x", DBadapter.y);
             		return rest.doPut(url+"", json2).toString();
+            	case 7:
+            		JSONArray json3 = rest.doGet(url+"");
+        			JSONObject c = json3.getJSONObject(0);
+        			//byteArray = Base64.decode(c.getString("picture"), 0);
+    		        //status = c.getString("status");
+    		        return c.getString("picture") + "BREAK" + c.getString("status");
+            	case 8:
+            		JSONArray json4 = rest.doGet(url+"");
+        			for(int i = 0; i < json4.length(); i++){
+        		        JSONObject c2 = json4.getJSONObject(i);
+        		        DBadapter.savePositionNoRest(c2.getString("app"), c2.getInt("x"), c2.getInt("y"));
+            		}
+        			break;
             }
         } catch (Exception e) {
             this.exception = e;
@@ -257,7 +325,7 @@ class AsyncRest extends AsyncTask<String, Void, String> {
     	if(exception != null) {
     		Log.i("Smartdoor", "AsyncTask Exception: "+exception);
     	}
-    	Log.i("Smartdoor", "Async Result: " + result);
+    	//Log.i("Smartdoor", "Async Result: " + result);
     	/*if(byteArray != null) {
 	     	Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 	    	ImageView status_pic = (ImageView) ((Activity) mContext).findViewById(R.id.status_pic);

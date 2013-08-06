@@ -114,8 +114,6 @@
             android:id="@+id/aboutme"
             android:layout_width="171dp"
             android:layout_height="171dp"
-            android:layout_x="236dp"
-            android:layout_y="14dp"
             android:contentDescription="aboutme"
             android:src="@drawable/aboutme" />
 
@@ -123,8 +121,6 @@
             android:id="@+id/coffee"
             android:layout_width="171dp"
             android:layout_height="171dp"
-            android:layout_x="139dp"
-            android:layout_y="8dp"
             android:contentDescription="coffee"
             android:src="@drawable/coffee" />
 
@@ -132,8 +128,6 @@
             android:id="@+id/postit"
             android:layout_width="171dp"
             android:layout_height="171dp"
-            android:layout_x="35dp"
-            android:layout_y="33dp"
             android:contentDescription="postit"
             android:src="@drawable/postit" />
 

@@ -9,16 +9,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.AbsoluteLayout;
+import android.widget.AbsoluteLayout.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.AbsoluteLayout.LayoutParams;
 
 public class AdminActivity extends Activity {
 	
@@ -89,12 +88,11 @@ public class AdminActivity extends Activity {
 		        if (me.getAction() == MotionEvent.ACTION_DOWN){
 		            oldXvalue = me.getX();
 		            oldYvalue = me.getY();
-		            Log.i("OnTouchListener", "Action Down " + oldXvalue + "," + oldYvalue);
 		        } else if (me.getAction() == MotionEvent.ACTION_MOVE  ){
-		        	LayoutParams params = new LayoutParams(v.getWidth(), v.getHeight(),(int)(me.getRawX() - (v.getWidth() / 2)), (int)(me.getRawY() - (v.getHeight()*3.3)));
+		        	LayoutParams params = new LayoutParams(v.getWidth(), v.getHeight(),(int)((me.getRawX() - (v.getWidth() / 2))*0.9), (int)(me.getRawY() - (v.getHeight() * 4)));
 		        	v.setLayoutParams(params);
 		        } else if (me.getAction() == MotionEvent.ACTION_UP) {
-		        	adapter.savePosition(v.getContentDescription()+"", Math.round(me.getRawX() - (v.getWidth() / 2)), (int)Math.round(me.getRawY() - (v.getHeight()*3.3)));
+		        	adapter.savePosition(v.getContentDescription()+"", (int)Math.round((me.getRawX() - (v.getWidth() / 2))*0.9), (int)Math.round(me.getRawY() - (v.getHeight() * 4)));
 		        }
 		        return true;
 		    }
@@ -230,7 +228,6 @@ public class AdminActivity extends Activity {
 	
 	protected void onDestroy() {
 		super.onDestroy();
-		adapter.close();
 	}
 
 }

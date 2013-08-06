@@ -8,12 +8,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsoluteLayout;
-import android.widget.AbsoluteLayout.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +32,7 @@ public class MainActivity extends Activity {
 	private ImageView moveCoffee;
 	private AbsoluteLayout aLayout;
 	static boolean startThread = false;
+	static boolean startThread2 = false;
 
 	public void onResume(){
 		super.onResume();
@@ -64,6 +65,7 @@ public class MainActivity extends Activity {
 		adapter.open();
 		context = this;
 		
+		//adapter.syncAppsFromServer();
 		//Populate the static statuses
 		/*adapter.saveStatic("I am out for lunch.");
 		adapter.saveStatic("I am out for a meeting.");
@@ -77,7 +79,6 @@ public class MainActivity extends Activity {
 		adapter.savePosition("coffee", 223, 2);*/
 		//Log.i("mytag", "Height: " + adapter.getPosition("postit")[0] + " - Width: " + adapter.getPosition("postit")[1]);
 		
-		final Button leavenote_button = (Button) findViewById(R.id.leavenote);
 		status_text = (TextView) findViewById(R.id.statustext);
 		status_pic = (ImageView) findViewById(R.id.statuspic);
 		movePostit = (ImageView) findViewById(R.id.postit);
@@ -85,13 +86,19 @@ public class MainActivity extends Activity {
 		moveCoffee = (ImageView) findViewById(R.id.coffee);
 		aLayout = (AbsoluteLayout) findViewById(R.id.alayout);
 		
-		Log.i("test", "I got this far");
 		if(!startThread) {
 			Handler handler = new Handler();
 			new Thread((Runnable) new TcpServer(handler)).start();
 			startThread = true;
 			Log.i("test", "I started the TCP Server");
-		}		
+		}
+		if(!startThread2) {
+			Handler handler2 = new Handler();
+			Thread sync = new Thread((Runnable) new AutoSync(handler2, this));
+			sync.start();
+			startThread2 = true;
+			Log.i("test", "I started the AutoSync");
+		}
 		
 		final Intent intent = getIntent();
 		if(intent.hasExtra("status_text")) {
@@ -103,7 +110,7 @@ public class MainActivity extends Activity {
 			status_pic.setImageBitmap(bmp);
 		}
 		
-		leavenote_button.setOnClickListener(new View.OnClickListener() {
+		movePostit.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				//Log.i("mytag", "Height: " + adapter.getPosition("postit")[0] + " - Width: " + adapter.getPosition("postit")[1]);
@@ -142,7 +149,13 @@ public class MainActivity extends Activity {
 		Bitmap bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length);
 		status_pic.setImageBitmap(bmp);
 	}
-	
+	public static void setStatusNoRest(String status, byte[] pic) {
+		adapter.saveStatusNoRest(pic, status);
+		status_text.setText(status);
+		Bitmap bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length);
+		status_pic.setImageBitmap(bmp);
+	}
+		
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -169,7 +182,7 @@ public class MainActivity extends Activity {
 	
 	protected void onDestroy() {
 		super.onDestroy();
-		adapter.close();
+		//adapter.close();
 	}
 
 }

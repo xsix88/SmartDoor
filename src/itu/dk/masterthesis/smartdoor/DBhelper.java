@@ -18,7 +18,7 @@ public class DBhelper extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE notes (_id integer primary key autoincrement, person TEXT, note TEXT, time DATETIME)");
 		db.execSQL("CREATE TABLE statuses (_id integer primary key autoincrement, pic BLOB, status TEXT, datetime INT)");
 		db.execSQL("CREATE TABLE statics (_id integer primary key autoincrement, pic BLOB, status TEXT)");
-		db.execSQL("CREATE TABLE positions (_id integer primary key autoincrement, app TEXT, x integer, y integer)");		
+		db.execSQL("CREATE TABLE positions (_id integer primary key autoincrement, app TEXT, x integer, y integer, link TEXT, icon BLOB)");		
 	}
 
 	@Override

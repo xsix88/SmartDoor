@@ -112,24 +112,34 @@
 
         <ImageView
             android:id="@+id/aboutme"
-            android:layout_width="171dp"
-            android:layout_height="171dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:contentDescription="aboutme"
             android:src="@drawable/aboutme" />
 
         <ImageView
             android:id="@+id/coffee"
-            android:layout_width="171dp"
-            android:layout_height="171dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:contentDescription="coffee"
             android:src="@drawable/coffee" />
 
         <ImageView
             android:id="@+id/postit"
-            android:layout_width="171dp"
-            android:layout_height="171dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:contentDescription="postit"
             android:src="@drawable/postit" />
+        <ImageView
+            android:id="@+id/linkOne"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="linkOne" />
+        <ImageView
+            android:id="@+id/linkTwo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="linkTwo" />
 
     </AbsoluteLayout>
 

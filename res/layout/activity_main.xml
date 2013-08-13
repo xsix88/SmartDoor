@@ -8,43 +8,125 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <DigitalClock
-        android:id="@+id/digitalClock1"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="DigitalClock"
-        android:textSize="30dp" />
+        android:background="#000000" >
+
+	    <TextView
+	        android:id="@+id/name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignLeft="@+id/group"
+	        android:layout_alignBottom="@+id/jesper"
+	        android:text="Jesper Sandberg"
+	        android:textColor="#FFFFFF"
+	        android:textSize="30dp" />
+	    
+	    <ImageView
+	        android:id="@+id/jesper"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+	        android:src="@drawable/jesper" />
+
+	    <TextView
+	        android:id="@+id/group"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/jesper"
+	        android:layout_marginLeft="10dp"
+	        android:layout_toRightOf="@+id/jesper"
+	        android:text="Software and Systems"
+	        android:textColor="#FFFFFF"
+	        android:textSize="20dp" />
+	
+	    <ImageView
+	        android:id="@+id/itulogo"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_marginTop="5dp"
+	        android:layout_marginRight="5dp"
+	        android:src="@drawable/itulogoblack" />
+	
+	    <TextView
+	        android:id="@+id/departmentno"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentTop="true"
+	        android:layout_toLeftOf="@+id/departmentletter"
+	        android:text="4"
+	        android:textColor="#a15524"
+	        android:textSize="50dp" />
+	    
+	    <TextView
+	        android:id="@+id/departmentletter"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/departmentno"
+	        android:layout_toLeftOf="@+id/room"
+	        android:text="D"
+	        android:textColor="#6a6a6c"
+	        android:textSize="50dp" />
+	
+	    <TextView
+	        android:id="@+id/room"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBottom="@+id/departmentletter"
+	        android:layout_toLeftOf="@+id/itulogo"
+	        android:layout_marginRight="10dp"
+	        android:text="15"
+	        android:textColor="#FFFFFF"
+	        android:textSize="35dp" />
+	
+	    <TextView
+	        android:id="@+id/title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignLeft="@+id/group"
+	        android:layout_above="@+id/name"
+	        android:textSize="16dp"
+	        android:textColor="#6a6a6c"
+	        android:text="SDT Student" />
+
+	    <DigitalClock
+	        android:id="@+id/digitalClock1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBottom="@+id/name"
+	        android:layout_alignParentRight="true"
+	        android:text="DigitalClock"
+	        android:layout_marginRight="5dp"
+	        android:textColor="#a15524"
+	        android:textSize="16dp" />
+	    
+	</RelativeLayout>
+	
+    <ImageView
+        android:id="@+id/statuspic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/statustext"
+        android:layout_below="@+id/topbar"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:src="@drawable/lunch" />
 
     <TextView
         android:id="@+id/statustext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/alayout"
         android:layout_below="@+id/statuspic"
-        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="I am out for lunch, will be back in 30 min"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="Computer Games and Interactive Design"
-        android:textSize="16dp" />
-
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/group"
-        android:layout_below="@+id/digitalClock1"
-        android:text="Jesper Sandberg"
-        android:textSize="30dp" />
-
+        android:textSize="40dp"
+        android:textStyle="bold" />
     <TextView
         android:id="@+id/notecounter"
         android:layout_width="wrap_content"
@@ -53,17 +135,7 @@
         android:text="0"
         android:textSize="20dp"
         android:visibility="invisible" />
-
-    <ImageView
-        android:id="@+id/statuspic"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/name"
-        android:layout_below="@+id/name"
-        android:layout_marginTop="19dp"
-        android:gravity="center"
-        android:src="@drawable/lunch" />
-
+    
     <AbsoluteLayout
         android:id="@+id/alayout"
         android:layout_width="match_parent"
@@ -80,27 +152,38 @@
 
         <ImageView
             android:id="@+id/aboutme"
-            android:layout_width="171dp"
-            android:layout_height="171dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_x="0dp"
             android:layout_y="0dp"
             android:src="@drawable/aboutme" />
 
         <ImageView
             android:id="@+id/postit"
-            android:layout_width="171dp"
-            android:layout_height="171dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_x="0dp"
             android:layout_y="0dp"
             android:src="@drawable/postit" />
 
         <ImageView
             android:id="@+id/coffee"
-            android:layout_width="171dp"
-            android:layout_height="171dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_x="0dp"
             android:layout_y="0dp"
             android:src="@drawable/coffee" />
+        
+        <ImageView
+            android:id="@+id/linkOne"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="linkOne" />
+        <ImageView
+            android:id="@+id/linkTwo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="linkTwo" />
 
     </AbsoluteLayout>
 

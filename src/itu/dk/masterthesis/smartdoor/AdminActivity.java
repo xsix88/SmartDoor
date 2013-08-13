@@ -31,6 +31,8 @@ public class AdminActivity extends Activity {
 	private ImageView movePostit;
 	private ImageView moveAboutme;
 	private ImageView moveCoffee;
+	private ImageView moveLinkOne;
+	private ImageView moveLinkTwo;
 	private float oldXvalue;
 	private float oldYvalue;
 	
@@ -54,6 +56,18 @@ public class AdminActivity extends Activity {
 		coffeeParams.x = coffeePosition[0];
 		coffeeParams.y = coffeePosition[1];
 		moveCoffee.requestLayout();
+		
+		int[] linkOnePosition = adapter.getPosition("linkOne");
+		AbsoluteLayout.LayoutParams linkOneParams = (AbsoluteLayout.LayoutParams)moveLinkOne.getLayoutParams();
+		linkOneParams.x = linkOnePosition[0];
+		linkOneParams.y = linkOnePosition[1];
+		moveLinkOne.requestLayout();
+		
+		int[] linkTwoPosition = adapter.getPosition("linkTwo");
+		AbsoluteLayout.LayoutParams linkTwoParams = (AbsoluteLayout.LayoutParams)moveLinkTwo.getLayoutParams();
+		linkTwoParams.x = linkTwoPosition[0];
+		linkTwoParams.y = linkTwoPosition[1];
+		moveLinkTwo.requestLayout();
 	}
 
 	@Override
@@ -74,6 +88,24 @@ public class AdminActivity extends Activity {
 		movePostit = (ImageView) findViewById(R.id.postit);
 		moveAboutme = (ImageView) findViewById(R.id.aboutme);
 		moveCoffee = (ImageView) findViewById(R.id.coffee);
+		moveLinkOne = (ImageView) findViewById(R.id.linkOne);
+		moveLinkTwo = (ImageView) findViewById(R.id.linkTwo);
+		byte[] icon1 = adapter.getAppPic("linkOne");
+		Bitmap bmp1 = BitmapFactory.decodeByteArray(icon1, 0, icon1.length);
+		bmp1 = Bitmap.createScaledBitmap(bmp1, 150, 150, true);
+		moveLinkOne.setImageBitmap(bmp1);
+		byte[] icon2 = adapter.getAppPic("linkTwo");
+		Bitmap bmp2 = BitmapFactory.decodeByteArray(icon2, 0, icon2.length);
+		bmp2 = Bitmap.createScaledBitmap(bmp2, 150, 150, true);
+		moveLinkTwo.setImageBitmap(bmp2);
+		if (bmp1 != null) {
+			bmp1.recycle();
+			bmp1 = null;
+		}
+		if (bmp2 != null) {
+			bmp2.recycle();
+			bmp2 = null;
+		}
 		/*
 		int[] postitPosition = adapter.getPosition("postit");
 		movePostit.setLayoutParams(new LayoutParams(movePostit.getWidth(), movePostit.getHeight(), postitPosition[0], postitPosition[1]));
@@ -101,6 +133,8 @@ public class AdminActivity extends Activity {
 		movePostit.setOnTouchListener(otimg);
 		moveAboutme.setOnTouchListener(otimg);
 		moveCoffee.setOnTouchListener(otimg);
+		moveLinkOne.setOnTouchListener(otimg);
+		moveLinkTwo.setOnTouchListener(otimg);
 		
 		if(adapter.getNumberOfNotes() > 0) {
 			readNotes_button.setText("Read notes ("+adapter.getNumberOfNotes()+")");
@@ -117,6 +151,10 @@ public class AdminActivity extends Activity {
 				   status_pic = (ImageView) findViewById(R.id.admin_picture);
 				   status_pic.setImageBitmap(bmp);
 				   status_text.setText(text);
+				   if (bmp != null) {
+						
+						bmp = null;
+					}
 				}
 				while(status.moveToNext());
 			}
@@ -204,6 +242,10 @@ public class AdminActivity extends Activity {
 				byteArray = data.getByteArrayExtra("selectedPicture");
 				Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 				status_pic.setImageBitmap(bmp);
+				if (bmp != null) {
+					
+					bmp = null;
+				}
 				status_text.setText(data.getStringExtra("status_text"));
 	        }
 	    }

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
+import android.util.Log;
 
 public class AutoSync implements Runnable {
 	Handler handler;
@@ -23,9 +24,44 @@ public class AutoSync implements Runnable {
 	public void run() {
         Looper.prepare();
 		while(true) {
-			defaults = adapter.checkForNewDefaults().split("BREAK");
+			
+			String[] apps;
+			String[] appdata = null;
+			apps = adapter.getNewApps().split("NEWLINE");
+			for(int i = 0; i < apps.length; i++) {
+				appdata = apps[i].split("BREAK");
+				if(appdata[0].contains("null")) {
+					appdata[0] = appdata[0].replace("null", "");
+				}
+				if(appdata.length == 1) {
+				}else if(appdata.length == 2){
+					if(adapter.getLink(appdata[0]) != appdata[1]) {
+						adapter.updatePosition(appdata[0], appdata[1], new byte[]{});
+					}
+				}else if(appdata.length == 3) {
+					if(adapter.getLink(appdata[0]) != appdata[1]) {
+						if(DBadapter.getAppPic(appdata[0]) != Base64.decode(appdata[2], 0)) {
+							final byte[] icon = Base64.decode(appdata[2], 0);
+							final String app = appdata[0];
+							adapter.updatePosition(appdata[0], appdata[1], icon);
+							handler.post(new Runnable() {
+				                @Override
+				                public void run() {
+				                	MainActivity.updateAppIcon(app, icon);
+				                }
+				            });
+						}
+					}
+				}
+			}
+			
+	        
+	        try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+	        
+	        defaults = adapter.checkForNewDefaults().split("BREAK");
 			final byte[] pic = Base64.decode(defaults[0], 0);
 			final String message = defaults[1];
+			defaults = null;
 	        Cursor cursor = adapter.getStatic("1");
 	        if(cursor.getCount() > 0) {
 				if (cursor.moveToFirst()){
@@ -45,6 +81,7 @@ public class AutoSync implements Runnable {
 			statuses = adapter.checkForNewStatuses().split("BREAK");
 			final byte[] pic2 = Base64.decode(statuses[0], 0);
 			final String message2 = statuses[1];
+			statuses = null;
 	        Cursor cursor2 = adapter.getStatus("1");
 	        if(cursor2.getCount() > 0) {
 				if (cursor2.moveToFirst()){

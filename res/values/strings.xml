@@ -4,15 +4,16 @@
     <string name="app_name">SmartDoor</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_admin">AdminActivity</string>
-    <string name="title_activity_note">NoteActivity</string>
-    <string name="title_activity_flickr">FlickrActivity</string>
-    <string name="title_activity_viewthumbnails">ViewThumbnailsActivity</string>
+    <string name="title_activity_admin">SmartDoor Admin</string>
+    <string name="title_activity_note">Leave a note</string>
+    <string name="title_activity_flickr">Search for picture</string>
+    <string name="title_activity_viewthumbnails">Search for picture</string>
     <string name="statusB">Update Status</string>
     <string name="pictureB">GO</string>
     <string name="note">Insert text to update the status...</string>
-    <string name="title_activity_view_thumbnails">ViewThumbnailsActivity</string>
-    <string name="title_activity_read_note">ReadNoteActivity</string>
+    <string name="title_activity_view_thumbnails">Search for picture</string>
+    <string name="title_activity_read_note">Read notes</string>
     <string name="more">More photos...</string>
+    <string name="title_activity_web">Web</string>
 
 </resources>

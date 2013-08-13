@@ -55,6 +55,21 @@ public class DBadapter {
 		new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/apps/index.php?owner_id=1");
 	}
 	
+	public String getNewApps() {
+		int cmd = 9;
+		AsyncTask<String, Void, String> results = new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/apps/index.php?owner_id=1&new=1");
+		try {
+			return results.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public String checkForNewDefaults() {
 		int cmd = 7;
 		AsyncTask<String, Void, String> results = new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/defaults/index.php?owner_id=1&new=1");
@@ -121,7 +136,8 @@ public class DBadapter {
 		values.put("app", app);
 		values.put("x", x);
 		values.put("y", y);
-        db.insert("positions", null, values);
+		db.update("positions", values, "app=?", new String[]{app});
+        //db.insert("positions", null, values);
         DBadapter.app = app;
         DBadapter.x = x;
         DBadapter.y = y;
@@ -129,12 +145,39 @@ public class DBadapter {
 		new AsyncRest(context, cmd).execute("http://jsnas.dyndns.org/SmartDoorRestAPI/apps/index.php");
 	}
 	
-	public static void savePositionNoRest(String app, int x, int y) {
+	public void insertNewPosition(String app, int x, int y) {
 		ContentValues values = new ContentValues();
 		values.put("app", app);
 		values.put("x", x);
 		values.put("y", y);
         db.insert("positions", null, values);
+	}
+	
+	public void updatePosition(String app, String link, byte[] icon) {
+		ContentValues values = new ContentValues();
+		values.put("app", app);
+		values.put("link", link);
+		values.put("icon", icon);
+		db.update("positions", values, "app=?", new String[]{app});
+	}
+	
+	public static void savePositionNoRest(String app, int x, int y, String link, String icon) {
+		ContentValues values = new ContentValues();
+		values.put("app", app);
+		values.put("x", x);
+		values.put("y", y);
+		values.put("link", link);
+		values.put("icon", icon);
+		//db.update("positions", values, "app="+app, null);
+        db.insert("positions", null, values);
+	}
+	
+	public static byte[] getAppPic(String app) {
+		Cursor nCount = db.rawQuery("SELECT icon FROM positions WHERE app=?", new String[]{app});
+		nCount.moveToFirst();
+		byte[] icon = nCount.getBlob(0);
+		nCount.close();
+		return icon;
 	}
 	
 	public Cursor getStatus(String amount) {
@@ -143,6 +186,14 @@ public class DBadapter {
 	
 	public Cursor getStatic(String amount) {
 		return db.rawQuery("SELECT * FROM statics ORDER BY _id DESC LIMIT ?", new String[] {amount});
+	}
+	
+	public String getLink(String app) {
+		Cursor nCount = db.rawQuery("SELECT link FROM positions WHERE app=?", new String[]{app});
+		nCount.moveToFirst();
+		String link = nCount.getString(0);
+		nCount.close();
+		return link;
 	}
 	
 	public int getNumberOfNotes() {
@@ -298,7 +349,7 @@ class AsyncRest extends AsyncTask<String, Void, String> {
             		json2.put("owner_id", 1);
             		json2.put("app", DBadapter.app);
             		json2.put("x", DBadapter.x);
-            		json2.put("x", DBadapter.y);
+            		json2.put("y", DBadapter.y);
             		return rest.doPut(url+"", json2).toString();
             	case 7:
             		JSONArray json3 = rest.doGet(url+"");
@@ -310,9 +361,18 @@ class AsyncRest extends AsyncTask<String, Void, String> {
             		JSONArray json4 = rest.doGet(url+"");
         			for(int i = 0; i < json4.length(); i++){
         		        JSONObject c2 = json4.getJSONObject(i);
-        		        DBadapter.savePositionNoRest(c2.getString("app"), c2.getInt("x"), c2.getInt("y"));
+        		        DBadapter.savePositionNoRest(c2.getString("app"), c2.getInt("x"), c2.getInt("y"), c2.getString("link"), c2.getString("icon"));
             		}
         			break;
+            	case 9:
+            		JSONArray json5 = rest.doGet(url+"");
+            		String results = null;
+            		for(int i = 0; i < json5.length(); i++){
+        		        JSONObject c3 = json5.getJSONObject(i);
+        		        byte[] temp = Base64.decode(c3.getString("icon"), Base64.DEFAULT); 
+    		        	results = results + c3.getString("app") + "BREAK" + c3.getString("link") + "BREAK" + c3.getString("icon") + "NEWLINE";
+            		}
+            		return results;
             }
         } catch (Exception e) {
             this.exception = e;

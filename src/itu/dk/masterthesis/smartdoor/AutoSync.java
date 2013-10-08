@@ -13,6 +13,8 @@ public class AutoSync implements Runnable {
 	byte[] picture = null;
 	String status = null;
 	String[] defaults;
+	String[] apps;
+	String[] appdata;
 	
 	public AutoSync(Handler handler, Context context) {
 		this.handler = handler;
@@ -25,8 +27,8 @@ public class AutoSync implements Runnable {
         Looper.prepare();
 		while(true) {
 			
-			String[] apps;
-			String[] appdata = null;
+			apps = null;
+			appdata = null;
 			apps = adapter.getNewApps().split("NEWLINE");
 			for(int i = 0; i < apps.length; i++) {
 				appdata = apps[i].split("BREAK");
@@ -54,7 +56,9 @@ public class AutoSync implements Runnable {
 					}
 				}
 			}
-			
+			apps = null;
+			appdata = null;
+			System.gc();
 	        
 	        try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 	        
@@ -72,7 +76,7 @@ public class AutoSync implements Runnable {
 	        if(status != message || pic != picture) {
 	        	adapter.syncDefaultsFromServer();
 	        }
-	        
+	        System.gc();
 	        try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 	        
 	        picture = null;
@@ -97,7 +101,8 @@ public class AutoSync implements Runnable {
 	                }
 	            });
 	        }
-			try { Thread.sleep(20000); } catch (InterruptedException e) { e.printStackTrace(); }
+	        System.gc();
+			try { Thread.sleep(10000); } catch (InterruptedException e) { e.printStackTrace(); }
 			
 			/*handler.post(new Runnable() {
 	            @Override

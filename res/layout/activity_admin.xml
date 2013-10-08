@@ -25,8 +25,6 @@
         android:ems="10"
         android:inputType="textMultiLine"
         android:text="I am out for lunch, will be back in 30 min" >
-
-        <requestFocus />
     </EditText>
 
     <TextView
@@ -45,14 +43,6 @@
         android:layout_alignLeft="@+id/admin_picture_textview"
         android:layout_below="@+id/admin_picture_textview"
         android:src="@drawable/lunch" />
-
-    <Button
-        android:id="@+id/admin_update_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="Update" />
 
     <Button
         android:id="@+id/clearNotesButton"
@@ -100,7 +90,7 @@
         android:id="@+id/alayout"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/noteButton"
         android:layout_below="@+id/admin_picture_change_button"
         android:layout_centerHorizontal="true"
         android:gravity="center"
@@ -140,7 +130,30 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:contentDescription="linkTwo" />
+        <ImageView
+            android:id="@+id/linkThree"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="linkThree" />
+        <ImageView
+            android:id="@+id/linkFour"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="linkFour" />
+        <ImageView
+            android:id="@+id/linkFive"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="linkFive" />
 
     </AbsoluteLayout>
+
+    <Button
+        android:id="@+id/admin_update_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="Update" />
 
 </RelativeLayout>

@@ -51,8 +51,8 @@
         android:id="@+id/add_note_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_below="@+id/persontext"
         android:text="Add note" />
 
 </RelativeLayout>

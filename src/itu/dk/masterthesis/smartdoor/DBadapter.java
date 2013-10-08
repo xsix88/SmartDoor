@@ -263,6 +263,14 @@ public class DBadapter {
         db.insert("statuses", null, values);
 	}
 	
+	public byte[] getStaticPic(String status) {
+		Cursor nCount = db.rawQuery("SELECT pic FROM statics WHERE status=?", new String[]{status});
+		nCount.moveToFirst();
+		byte[] pic = nCount.getBlob(0);
+		nCount.close();
+		return pic;
+	}
+	
 	public void clearNotes() {
 		db.execSQL("DELETE FROM notes");
 	}

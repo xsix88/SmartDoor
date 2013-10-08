@@ -30,10 +30,14 @@ public class MainActivity extends Activity {
 	private ImageView moveCoffee;
 	private static ImageView moveLinkOne;
 	private static ImageView moveLinkTwo;
+	private static ImageView moveLinkThree;
+	private static ImageView moveLinkFour;
+	private static ImageView moveLinkFive;
 	private AbsoluteLayout aLayout;
 	static boolean startThread = false;
 	static boolean startThread2 = false;
-	final static int pictureSize = 400;
+	final static int maxPictureSize = 400;
+	final static int minPictureSize = 319;
 
 	public void onResume(){
 		super.onResume();
@@ -67,6 +71,24 @@ public class MainActivity extends Activity {
 		linkTwoParams.x = linkTwoPosition[0];
 		linkTwoParams.y = linkTwoPosition[1];
 		moveLinkTwo.requestLayout();
+		
+		int[] linkThreePosition = adapter.getPosition("linkThree");
+		AbsoluteLayout.LayoutParams linkThreeParams = (AbsoluteLayout.LayoutParams)moveLinkThree.getLayoutParams();
+		linkThreeParams.x = linkThreePosition[0];
+		linkThreeParams.y = linkThreePosition[1];
+		moveLinkTwo.requestLayout();
+		
+		int[] linkFourPosition = adapter.getPosition("linkFour");
+		AbsoluteLayout.LayoutParams linkFourParams = (AbsoluteLayout.LayoutParams)moveLinkFour.getLayoutParams();
+		linkFourParams.x = linkFourPosition[0];
+		linkFourParams.y = linkFourPosition[1];
+		moveLinkFour.requestLayout();
+		
+		int[] linkFivePosition = adapter.getPosition("linkFive");
+		AbsoluteLayout.LayoutParams linkFiveParams = (AbsoluteLayout.LayoutParams)moveLinkFive.getLayoutParams();
+		linkFiveParams.x = linkFivePosition[0];
+		linkFiveParams.y = linkFivePosition[1];
+		moveLinkFive.requestLayout();
 	}
 	
 	@Override
@@ -86,15 +108,29 @@ public class MainActivity extends Activity {
 		adapter.saveStatic("I am on holiday.");
 		adapter.saveStatic("I am at a conference.");*/
 		//adapter.clearStatics();
+		
+		
+		
+		
+		
 		//Populate X and Y positions
 		/*adapter.insertNewPosition("postit", 223, 2);
 		adapter.insertNewPosition("aboutme", 223, 2);
 		adapter.insertNewPosition("coffee", 223, 2);
 		adapter.insertNewPosition("linkOne", 223, 2);
-		adapter.insertNewPosition("linkTwo", 223, 2);*/
+		adapter.insertNewPosition("linkTwo", 223, 2);
+		adapter.insertNewPosition("linkThree", 223, 2);
+		adapter.insertNewPosition("linkFour", 223, 2);
+		adapter.insertNewPosition("linkFive", 223, 2);
 		//Log.i("mytag", "Height: " + adapter.getPosition("postit")[0] + " - Width: " + adapter.getPosition("postit")[1]);
-		/*adapter.savePosition("linkOne", 258, 65);
-		adapter.savePosition("linkTwo", 258, 65);*/
+		adapter.savePosition("linkOne", 258, 65);
+		adapter.savePosition("linkTwo", 258, 65);
+		adapter.savePosition("linkThree", 258, 65);
+		adapter.savePosition("linkFour", 258, 65);
+		adapter.savePosition("linkFive", 258, 65);*/
+		
+		
+		
 		
 		status_text = (TextView) findViewById(R.id.statustext);
 		status_pic = (ImageView) findViewById(R.id.statuspic);
@@ -104,6 +140,9 @@ public class MainActivity extends Activity {
 		aLayout = (AbsoluteLayout) findViewById(R.id.alayout);
 		moveLinkOne = (ImageView) findViewById(R.id.linkOne);
 		moveLinkTwo = (ImageView) findViewById(R.id.linkTwo);
+		moveLinkThree = (ImageView) findViewById(R.id.linkThree);
+		moveLinkFour = (ImageView) findViewById(R.id.linkFour);
+		moveLinkFive = (ImageView) findViewById(R.id.linkFive);
 		ImageView ituLogo = (ImageView) findViewById(R.id.itulogo);
 		
 		if(!startThread) {
@@ -126,15 +165,22 @@ public class MainActivity extends Activity {
 		}
 		if(intent.hasExtra("status_pic")) {
 			byte[] byteArray = intent.getExtras().getByteArray("status_pic");
-			Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-			while(bmp.getHeight() > pictureSize) {
-				bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*0.8), (int)(bmp.getHeight()*0.8), true);
+			BitmapFactory.Options options=new BitmapFactory.Options();
+			options.inSampleSize = 3;
+			Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, options);
+			while(bmp.getHeight() > maxPictureSize || bmp.getHeight() < minPictureSize) {
+				if(bmp.getHeight() > maxPictureSize) {
+					bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*0.8), (int)(bmp.getHeight()*0.8), true);
+				}
+				if(bmp.getHeight() < minPictureSize) {
+					bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*1.2), (int)(bmp.getHeight()*1.2), true);
+				}
 			}
 			status_pic.setImageBitmap(bmp);
 			if (bmp != null) {
-				
 				bmp = null;
 			}
+			System.gc();
 		}
 		
 		ituLogo.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +227,33 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		moveLinkThree.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, WebActivity.class);
+				String link = adapter.getLink("linkThree");
+				intent.putExtra("web", link);
+				startActivity(intent);
+			}
+		});
+		moveLinkFour.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, WebActivity.class);
+				String link = adapter.getLink("linkFour");
+				intent.putExtra("web", link);
+				startActivity(intent);
+			}
+		});
+		moveLinkFive.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, WebActivity.class);
+				String link = adapter.getLink("linkFive");
+				intent.putExtra("web", link);
+				startActivity(intent);
+			}
+		});
 		
 		status = adapter.getStatus("1");
 		if(status.getCount() > 0) {
@@ -188,16 +261,24 @@ public class MainActivity extends Activity {
 				do {
 				   String text = status.getString(status.getColumnIndex("status"));
 				   byteArray =  status.getBlob(status.getColumnIndex("pic"));
-				   Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-				   while(bmp.getHeight() > pictureSize) {
-						bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*0.8), (int)(bmp.getHeight()*0.8), true);
+				   BitmapFactory.Options options=new BitmapFactory.Options();
+				   options.inSampleSize = 3;
+				   Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length,options);
+				   while(bmp.getHeight() > maxPictureSize || bmp.getHeight() < minPictureSize) {
+						if(bmp.getHeight() > maxPictureSize) {
+							bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*0.8), (int)(bmp.getHeight()*0.8), true);
+						}
+						if(bmp.getHeight() < minPictureSize) {
+							bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*1.2), (int)(bmp.getHeight()*1.2), true);
+						}
 					}
 				   status_pic.setImageBitmap(bmp);
 				   status_text.setText(text);
 				   if (bmp != null) {
-						
 						bmp = null;
+						byteArray = null;
 					}
+				   System.gc();
 				}
 				while(status.moveToNext());
 			}
@@ -205,7 +286,9 @@ public class MainActivity extends Activity {
 		}
 	}
 	public static void updateAppIcon(String app, byte[] icon) {
-		Bitmap bmp = BitmapFactory.decodeByteArray(icon, 0, icon.length);
+		BitmapFactory.Options options=new BitmapFactory.Options();
+		options.inSampleSize = 3;
+		Bitmap bmp = BitmapFactory.decodeByteArray(icon, 0, icon.length,options);
 		bmp = Bitmap.createScaledBitmap(bmp, 150, 150, true);
 		if(app.equalsIgnoreCase("linkOne")) {
 			moveLinkOne.setImageBitmap(bmp);
@@ -213,10 +296,19 @@ public class MainActivity extends Activity {
 		if(app.equalsIgnoreCase("linkTwo")) {
 			moveLinkTwo.setImageBitmap(bmp);
 		}
+		if(app.equalsIgnoreCase("linkThree")) {
+			moveLinkThree.setImageBitmap(bmp);
+		}
+		if(app.equalsIgnoreCase("linkFour")) {
+			moveLinkFour.setImageBitmap(bmp);
+		}
+		if(app.equalsIgnoreCase("linkFive")) {
+			moveLinkFive.setImageBitmap(bmp);
+		}
 		if (bmp != null) {
-			
 			bmp = null;
 		}
+		System.gc();
 	}
 	
 	public static void setStatus(String status, byte[] pic) {
@@ -231,36 +323,50 @@ public class MainActivity extends Activity {
 		}
 		adapter.saveStatus(pic, status);
 		status_text.setText(status);
-		Bitmap bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length);
-		while(bmp.getHeight() > pictureSize) {
-			bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*0.8), (int)(bmp.getHeight()*0.8), true);
+		BitmapFactory.Options options=new BitmapFactory.Options();
+		options.inSampleSize = 3;
+		Bitmap bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length,options);
+		while(bmp.getHeight() > maxPictureSize || bmp.getHeight() < minPictureSize) {
+			if(bmp.getHeight() > maxPictureSize) {
+				bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*0.8), (int)(bmp.getHeight()*0.8), true);
+			}
+			if(bmp.getHeight() < minPictureSize) {
+				bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*1.2), (int)(bmp.getHeight()*1.2), true);
+			}
 		}
 		status_pic.setImageBitmap(bmp);
 		if (bmp != null) {
-			
 			bmp = null;
 		}
+		System.gc();
 	}
 	
 	public static void setStatusNoRest(String status, byte[] pic) {
 		adapter.saveStatusNoRest(pic, status);
 		status_text.setText(status);
-		Bitmap bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length);
-		while(bmp.getHeight() > pictureSize) {
-			bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*0.8), (int)(bmp.getHeight()*0.8), true);
+		BitmapFactory.Options options=new BitmapFactory.Options();
+		options.inSampleSize = 3;
+		Bitmap bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length,options);
+		while(bmp.getHeight() > maxPictureSize || bmp.getHeight() < minPictureSize) {
+			if(bmp.getHeight() > maxPictureSize) {
+				bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*0.8), (int)(bmp.getHeight()*0.8), true);
+			}
+			if(bmp.getHeight() < minPictureSize) {
+				bmp = Bitmap.createScaledBitmap(bmp,(int)(bmp.getWidth()*1.2), (int)(bmp.getHeight()*1.2), true);
+			}
 		}
 		status_pic.setImageBitmap(bmp);
 		if (bmp != null) {
-			
 			bmp = null;
 		}
+		System.gc();
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		MenuItem item = menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, "Admin");
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		//MenuItem item = menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, "Admin");
+		//item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
